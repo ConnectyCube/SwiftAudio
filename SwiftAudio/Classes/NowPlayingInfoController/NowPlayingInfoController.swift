@@ -15,11 +15,11 @@ public class NowPlayingInfoController: NowPlayingInfoControllerProtocol {
     private var _info: [String: Any] = [:]
     
     var infoCenter: NowPlayingInfoCenter {
-        return _infoCenter
+        return self._infoCenter
     }
     
     var info: [String: Any] {
-        return _info
+        return self._info
     }
     
     public required init() {
@@ -31,20 +31,23 @@ public class NowPlayingInfoController: NowPlayingInfoControllerProtocol {
     }
     
     public func set(keyValues: [NowPlayingInfoKeyValue]) {
-        keyValues.forEach { (keyValue) in
-            _info[keyValue.getKey()] = keyValue.getValue()
+        DispatchQueue.main.async { [weak self] in
+            keyValues.forEach { (keyValue) in
+                self!._info[keyValue.getKey()] = keyValue.getValue()
+            }
+            self!._infoCenter.nowPlayingInfo = self!._info
         }
-        self._infoCenter.nowPlayingInfo = _info
     }
     
     public func set(keyValue: NowPlayingInfoKeyValue) {
-        _info[keyValue.getKey()] = keyValue.getValue()
-        self._infoCenter.nowPlayingInfo = _info
+        DispatchQueue.main.async { [weak self] in
+            self!._info[keyValue.getKey()] = keyValue.getValue()
+            self!._infoCenter.nowPlayingInfo = self!._info
+        }
     }
     
     public func clear() {
         self._info = [:]
-        self._infoCenter.nowPlayingInfo = _info
+        self._infoCenter.nowPlayingInfo = self._info
     }
-    
 }
